@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="BoMon Test Suite" parallel="false">
+
+    <test name="BoMon High Priority And Negative Tests">
+        <classes>
+            <class name="com.test.BoMonHighPriorityTest"/>
+            <class name="com.test.BoMonNegativeTest"/>
+        </classes>
+    </test>
+
+</suite>
