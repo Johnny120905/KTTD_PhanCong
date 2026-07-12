@@ -1,0 +1,19 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="VLU_Automation_Suite" verbose="1">
+
+    <!-- BƯỚC 1: Quét toàn bộ Giao diện khung (Global UI) trước -->
+    <test name="Test_GiaoDien_ToanCuc">
+        <classes>
+            <class name="com.bcntest.core.MasterLayoutTest" />
+        </classes>
+    </test>
+
+    <!-- BƯỚC 2: Test Logic và UI riêng của chức năng Quản lý Người dùng -->
+    <test name="Test_ChucNang_NguoiDung">
+        <classes>
+            <class name="com.bcntest.features.quanlynguoidung.TaoNguoiDungTest" />
+            <!-- Sau này ông code thêm chức năng nào (Xem, Xóa, Sửa), cứ copy thêm thẻ <class> dán nối tiếp vào đây -->
+        </classes>
+    </test>
+
+</suite>
