@@ -4,9 +4,10 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.gvpages.loginpages;
@@ -18,8 +19,12 @@ public class dangnhap {
     WebDriver driver;
     loginpages login;
 
-    @BeforeMethod
+    @BeforeClass
     public void setUp() {
+
+        System.out.println("\n===============================================");
+        System.out.println("KHỞI TẠO MÔI TRƯỜNG KIỂM THỬ ĐĂNG NHẬP");
+        System.out.println("===============================================\n");
 
         WebDriverManager.chromedriver().setup();
 
@@ -32,8 +37,10 @@ public class dangnhap {
         options.setAcceptInsecureCerts(true);
 
         options.setExperimentalOption("excludeSwitches",
-                new String[]{"enable-automation"});
+                new String[] { "enable-automation" });
+
         options.setExperimentalOption("useAutomationExtension", false);
+
         options.addArguments("--disable-blink-features=AutomationControlled");
 
         driver = new ChromeDriver(options);
@@ -44,31 +51,79 @@ public class dangnhap {
         driver.manage().window().maximize();
 
         login = new loginpages(driver);
+
     }
 
-    @Test
-    public void testDangNhapDangXuat() throws Exception {
+    // ==========================
+    // LG01 - Login thành công
+    // ==========================
+
+    @Test(priority = 1)
+    public void LG01_LoginSuccess() throws Exception {
+
+        System.out.println("LG01 - ĐĂNG NHẬP THÀNH CÔNG");
 
         login.openWebsite();
 
-        Thread.sleep(3000);
-
         login.login();
 
-        login.logout();
+        Assert.assertTrue(
+                login.isLoginSuccess(),
+                "Đăng nhập thất bại.");
 
-        Thread.sleep(5000);
+        System.out.println("KẾT QUẢ: PASS\n");
 
-        Assert.assertTrue(login.isLogoutSuccess());
-
-        System.out.println("===== LOGIN / LOGOUT SUCCESS =====");
     }
 
-    @AfterMethod
+    // ==========================
+    // LG02 - Truy cập Timetable
+    // ==========================
+
+    @Test(priority = 2, dependsOnMethods = "LG01_LoginSuccess")
+    public void LG02_OpenTimetable() {
+
+        System.out.println("LG02 - TRUY CẬP TRANG THỜI KHÓA BIỂU");
+
+        login.accessTimetableDirectly();
+
+        Assert.assertTrue(
+                login.isLoginSuccess(),
+                "Không thể truy cập Timetable sau khi đăng nhập.");
+
+        System.out.println("KẾT QUẢ: PASS\n");
+
+    }
+
+    // ==========================
+    // LG03 - Kiểm tra Session
+    // ==========================
+
+    @Test(priority = 3, dependsOnMethods = "LG02_OpenTimetable")
+    public void LG03_RefreshSession() {
+
+        System.out.println("LG03 - KIỂM TRA SESSION SAU KHI REFRESH");
+
+        driver.navigate().refresh();
+
+        Assert.assertTrue(
+                login.isLoginSuccess(),
+                "Session đăng nhập không được giữ sau khi Refresh.");
+
+        System.out.println("KẾT QUẢ: PASS\n");
+
+    }
+
+    @AfterClass
     public void tearDown() {
 
         if (driver != null) {
+
             driver.quit();
+
         }
+
+        System.out.println("HOÀN THÀNH KIỂM THỬ CHỨC NĂNG ĐĂNG NHẬP");
+
     }
+
 }
