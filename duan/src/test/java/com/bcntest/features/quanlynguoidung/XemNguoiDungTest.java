@@ -94,7 +94,7 @@ public class XemNguoiDungTest extends BaseTest {
     }
 
     // ==========================================
-    // 4. LUỒNG GIAO DIỆN (UI/UX): CỘT, SORTING, RESPONSIVE, SCROLL
+    // 4. LUỒNG GIAO DIỆN (UI/UX): CỘT, RESPONSIVE, SCROLL
     // ==========================================
     @Test(priority = 5)
     public void testF21_LuongUI_KiemTraCauTrucCot() {
@@ -109,20 +109,44 @@ public class XemNguoiDungTest extends BaseTest {
         Assert.assertTrue(chuoiCacCot.contains("ROLE"), "Lỗi UI: Thiếu cột Role trên bảng!");
     }
 
-    // ĐÃ BỔ SUNG THEO YÊU CẦU: Test chức năng Click vào tiêu đề cột để Sắp Xếp
-    @Test(priority = 6)
-    public void testF21_LuongUI_KiemTraTinhNangSapXepCot() throws InterruptedException {
-        System.out.println("--- LUỒNG GIAO DIỆN: KIỂM TRA SẮP XẾP (SORTING) TRÊN TIÊU ĐỀ CỘT ---");
-        driver.navigate().refresh();
-        Thread.sleep(2000);
+    // ==========================================
+    // 5. KỊCH BẢN BỔ SUNG: SẮP XẾP TẤT CẢ CÁC CỘT (SORTING MŨI TÊN LÊN/XUỐNG)
+    // ==========================================
+    @DataProvider(name = "danhSachCotSapXepNguoiDung")
+    public Object[][] provideSortableColumns() {
+        return new Object[][] {
+            {"Mã giảng viên"}, 
+            {"Tên giảng viên"}, 
+            {"Email"}, 
+            {"Loại"}, 
+            {"Role"}
+        };
+    }
+
+    @Test(priority = 6, dataProvider = "danhSachCotSapXepNguoiDung")
+    public void testF21_LuongUI_KiemTraTinhNangSapXepCot(String tenCot) throws InterruptedException {
+        System.out.println("--- LUỒNG GIAO DIỆN: KIỂM TRA SẮP XẾP (MŨI TÊN LÊN/XUỐNG) CỘT [" + tenCot + "] ---");
         
-        // Bấm vào cột Tên giảng viên 1 lần để kích hoạt Sort
-        nguoiDungPage.bamTieuDeCotDeSapXep("Tên giảng viên");
+        // Cố tình cuộn lên đầu để đảm bảo click trúng tiêu đề cột
+        nguoiDungPage.cuonLenDauTrang();
+        Thread.sleep(1000);
+        
+        // CLICK LẦN 1: Mong đợi aria-sort chuyển thành 'ascending' (Mũi tên chỉ lên) hoặc 'descending'
+        nguoiDungPage.bamTieuDeCotDeSapXep(tenCot);
+        Thread.sleep(1500); // Chờ UI DataTables vẽ lại CSS mũi tên
+        
+        String trangThaiLan1 = nguoiDungPage.layTrangThaiSapXepCuaCot(tenCot);
+        Assert.assertNotNull(trangThaiLan1, "Lỗi UI/UX: Cột [" + tenCot + "] không hỗ trợ thuộc tính aria-sort!");
+        Assert.assertTrue(trangThaiLan1.equals("ascending") || trangThaiLan1.equals("descending"), 
+            "Lỗi UI/UX: Click lần 1 nhưng cột [" + tenCot + "] không nhận diện được trạng thái sắp xếp!");
+
+        // CLICK LẦN 2: Mong đợi đảo ngược trạng thái (Mũi tên chỉ xuống)
+        nguoiDungPage.bamTieuDeCotDeSapXep(tenCot);
         Thread.sleep(1500);
         
-        String trangThaiSort = nguoiDungPage.layTrangThaiSapXepCuaCot("Tên giảng viên");
-        Assert.assertNotNull(trangThaiSort, "Lỗi UI/UX: Cột Tên giảng viên không có thuộc tính aria-sort để xác định trạng thái sắp xếp!");
-        Assert.assertTrue(trangThaiSort.equals("ascending") || trangThaiSort.equals("descending"), "Lỗi UI/UX: Tính năng Sort của DataTables bị liệt!");
+        String trangThaiLan2 = nguoiDungPage.layTrangThaiSapXepCuaCot(tenCot);
+        Assert.assertNotEquals(trangThaiLan1, trangThaiLan2, 
+            "Lỗi UI/UX: Click lần 2 nhưng cột [" + tenCot + "] không đảo chiều mũi tên sắp xếp (asc/desc)!");
     }
 
     @Test(priority = 7)
