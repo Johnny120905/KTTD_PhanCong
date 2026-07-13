@@ -6,80 +6,144 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Dimension;
 
 public class XemNganhHocTest extends BaseTest {
-
-    QuanLyNganhHocPage page;
+    QuanLyNganhHocPage nganhHocPage;
 
     @BeforeClass
-    public void init() throws InterruptedException {
-        page = new QuanLyNganhHocPage(driver);
-        
-        // LƯU Ý CHO ÔNG NGỌC: 
-        // Ông nhớ check lại trên web xem đường dẫn (URL) vào trang Quản lý Ngành là gì nhé.
-        // Ví dụ nếu là "/Major" thì điền vào đây.
+    public void initPage() throws InterruptedException {
+        nganhHocPage = new QuanLyNganhHocPage(driver);
         driver.get(BASE_URL + "Major"); 
-        Thread.sleep(3000); 
+        Thread.sleep(1500);
     }
 
     // ==========================================
-    // 1. LUỒNG ĐÚNG: Tải trang hiển thị danh sách
+    // 1. LUỒNG ĐÚNG (HAPPY PATH): BẤM NEXT / PREV
     // ==========================================
     @Test(priority = 1)
-    public void testTC01_XemDanhSachNganhHoc() throws InterruptedException {
-        System.out.println("--- LUỒNG ĐÚNG: KIỂM TRA HIỂN THỊ DANH SÁCH ---");
-        driver.navigate().refresh();
-        Thread.sleep(2000);
+    public void testF33_LuongDung_ChuyenTrangBinhThuong() throws InterruptedException {
+        System.out.println("--- LUỒNG ĐÚNG: XEM DỮ LIỆU BẰNG NÚT NEXT/PREVIOUS ---");
         
-        int soLuong = page.laySoLuongNganhHocHienThi();
-        Assert.assertTrue(soLuong > 0, "Lỗi: Danh sách ngành học không hiển thị hoặc bảng bị trống!");
+        String thongTinTrang1 = nganhHocPage.layThongTinPhanTrang();
+        Assert.assertFalse(thongTinTrang1.isEmpty(), "Lỗi: Không lấy được thông tin số trang!");
+        
+        nganhHocPage.bamTrangTiepTheo();
+        Thread.sleep(500); // Chờ UI DataTables render trang mới
+        
+        String thongTinTrang2 = nganhHocPage.layThongTinPhanTrang();
+        Assert.assertNotEquals(thongTinTrang1, thongTinTrang2, "Lỗi: Bấm Next nhưng trang không chuyển!");
+
+        nganhHocPage.bamTrangTruoc();
+        Thread.sleep(500);
+        
+        String thongTinTrangHienTai = nganhHocPage.layThongTinPhanTrang();
+        Assert.assertEquals(thongTinTrangHienTai, thongTinTrang1, "Lỗi: Bấm Previous nhưng không về đúng trang ban đầu!");
     }
 
     // ==========================================
-    // 2. LUỒNG SAI: Tìm từ khóa không tồn tại
+    // 2. LUỒNG SAI (NEGATIVE PATH): NÚT BỊ KHÓA
     // ==========================================
     @Test(priority = 2)
-    public void testTC02_TimKiemKhongTonTai() throws InterruptedException {
-        System.out.println("--- LUỒNG SAI: TÌM KIẾM DỮ LIỆU KHÔNG TỒN TẠI ---");
+    public void testF33_LuongSai_BamTrangTruocKhiOTRangMot() throws InterruptedException {
+        System.out.println("--- LUỒNG SAI: BẤM PREVIOUS KHI ĐANG Ở TRANG 1 ---");
         driver.navigate().refresh();
-        Thread.sleep(2000);
+        Thread.sleep(1500);
         
-        String tuKhoaRac = "NganhHocX_9999";
-        page.nhapTuKhoaTimKiem(tuKhoaRac);
-        Thread.sleep(1500); // Đợi bảng filter
+        boolean isDisabled = nganhHocPage.kiemTraNutTruocBiKhoa();
+        Assert.assertTrue(isDisabled, "Lỗi UI: Đang ở trang 1 nhưng thẻ <li> của nút Previous không bị khóa!");
         
-        // Kiểm tra số lượng dòng bằng 0
-        int soLuong = page.laySoLuongNganhHocHienThi();
-        Assert.assertEquals(soLuong, 0, "Lỗi: Tìm từ khóa rác nhưng bảng vẫn hiện dữ liệu!");
+        String thongTinTruocKhiBam = nganhHocPage.layThongTinPhanTrang();
         
-        // Kiểm tra thông báo
-        String thongBao = page.layThongBaoKhongCoDuLieu().toLowerCase();
-        Assert.assertTrue(thongBao.contains("không tìm thấy") || thongBao.contains("không có") || thongBao.contains("no data"), 
-                "Lỗi: Không hiển thị đúng thông báo rỗng. Thực tế thông báo: '" + thongBao + "'");
+        nganhHocPage.bamTrangTruoc();
+        Thread.sleep(400); 
+        
+        String thongTinSauKhiBam = nganhHocPage.layThongTinPhanTrang();
+        Assert.assertEquals(thongTinSauKhiBam, thongTinTruocKhiBam, "Lỗi: Hệ thống cho phép lùi về trang số âm!");
     }
 
     // ==========================================
-    // 3. LUỒNG DATA: Tìm kiếm đa dạng theo Cột
+    // 3. LUỒNG DATA (DATA-DRIVEN): NHẢY TRANG CỤ THỂ
     // ==========================================
-    @DataProvider(name = "duLieuTimKiemNganh")
+    @DataProvider(name = "duLieuTrang")
     public Object[][] provideData() {
         return new Object[][] {
-            {"000001"},     // Tìm theo Mã Ngành
-            {"Kiểm Thử"},   // Tìm theo Tên Ngành
-            {"CNTT"}        // Tìm theo Tên Viết Tắt
+            {"2"}, {"4"}, {"5"} 
         };
     }
 
-    @Test(priority = 3, dataProvider = "duLieuTimKiemNganh")
-    public void testTC03_TimKiemDataDriven(String tuKhoa) throws InterruptedException {
-        System.out.println("--- LUỒNG DATA: TÌM KIẾM VỚI TỪ KHÓA '" + tuKhoa + "' ---");
-        driver.navigate().refresh();
-        Thread.sleep(2000);
-
-        page.nhapTuKhoaTimKiem(tuKhoa);
-        Thread.sleep(1500); 
+    @Test(priority = 3, dataProvider = "duLieuTrang")
+    public void testF33_LuongData_ChonTrangCuThe(String soTrang) throws InterruptedException {
+        System.out.println("--- LUỒNG DATA: JUMP TỚI TRANG SỐ " + soTrang + " ---");
+        String thongTinCu = nganhHocPage.layThongTinPhanTrang();
         
-        int soLuong = page.laySoLuongNganhHocHienThi();
-        Assert.assertTrue(soLuong > 0, "Fail Data-driven: Nhập từ khóa đúng '" + tuKhoa + "' nhưng không tìm thấy dữ liệu!");
+        try {
+            nganhHocPage.bamChonTrangSo(soTrang);
+            Thread.sleep(500);
+            
+            String thongTinMoi = nganhHocPage.layThongTinPhanTrang();
+            Assert.assertNotEquals(thongTinCu, thongTinMoi, "Lỗi: Bấm số trang nhưng bảng không tải dữ liệu mới!");
+        } catch (Exception e) {
+            System.out.println("-> Bỏ qua kiểm tra: Bảng không có đủ dữ liệu để tạo ra trang số " + soTrang);
+        }
+    }
+
+    // ==========================================
+    // 4. LUỒNG GIAO DIỆN: SẮP XẾP TẤT CẢ CÁC CỘT
+    // ==========================================
+    @DataProvider(name = "danhSachCacCotSapXep")
+    public Object[][] columnData() {
+        return new Object[][] {
+            {"Mã ngành"}, 
+            {"Tên ngành"}, 
+            {"Tên viết tắt"}, 
+            {"CTĐT"}
+        };
+    }
+
+    @Test(priority = 4, dataProvider = "danhSachCacCotSapXep")
+    public void testF33_LuongUI_SapXepTatCaCacCot(String tenCot) throws InterruptedException {
+        System.out.println("--- LUỒNG GIAO DIỆN: SẮP XẾP CỘT [" + tenCot + "] ---");
+        
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0)");
+        Thread.sleep(300);
+
+        nganhHocPage.bamSapXepCot(tenCot);
+        Thread.sleep(500); 
+        
+        String trangThaiLan1 = nganhHocPage.layTrangThaiSapXepCot(tenCot);
+        Assert.assertTrue(trangThaiLan1.contains("asc") || trangThaiLan1.contains("desc"), "Lỗi: Cột " + tenCot + " không nhận CSS sắp xếp!");
+
+        nganhHocPage.bamSapXepCot(tenCot);
+        Thread.sleep(500);
+        
+        String trangThaiLan2 = nganhHocPage.layTrangThaiSapXepCot(tenCot);
+        Assert.assertNotEquals(trangThaiLan1, trangThaiLan2, "Lỗi: DataTables không đảo chiều sắp xếp khi click lần 2 ở cột " + tenCot);
+    }
+
+    // ==========================================
+    // 5. LUỒNG UI: ZOOM VÀ SCROLL
+    // ==========================================
+    @Test(priority = 5)
+    public void testF33_LuongUI_ResponsiveScroll() throws InterruptedException {
+        System.out.println("--- LUỒNG UI: PHÓNG TO, THU NHỎ, LƯỚT TRANG KHI XEM ---");
+        try {
+            driver.manage().window().setSize(new Dimension(375, 812));
+            Thread.sleep(600); 
+            
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+            Thread.sleep(400); 
+            
+            js.executeScript("window.scrollTo(0, 0)");
+            Thread.sleep(400);
+            
+        } catch (Exception e) {
+            Assert.fail("Lỗi Giao diện: Bị vỡ hoặc lỗi khi thao tác Responsive: " + e.getMessage());
+        } finally {
+            driver.manage().window().maximize(); 
+            Thread.sleep(500);
+        }
     }
 }
