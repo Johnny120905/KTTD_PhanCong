@@ -7,17 +7,30 @@ public class loginpages {
 
     WebDriver driver;
 
-    public loginpages(WebDriver driver) {   // <-- sửa ở đây
+    public loginpages(WebDriver driver) {
         this.driver = driver;
     }
 
+    // ==========================
+    // Locator
+    // ==========================
+
     By btnDangNhap = By.xpath("//button[contains(text(),'Đăng nhập')]");
     By account = By.xpath("//span[contains(text(),'@vanlanguni.vn')]");
-    By btnDangXuat = By.xpath("//a[contains(text(),'Đăng xuất')]");
+
+    // ==========================
+    // Mở website
+    // ==========================
 
     public void openWebsite() {
+
         driver.get("https://cntttest.vanlanguni.edu.vn:18081/Phancong02/");
+
     }
+
+    // ==========================
+    // Login thành công
+    // ==========================
 
     public void login() throws InterruptedException {
 
@@ -26,18 +39,43 @@ public class loginpages {
         Thread.sleep(8000);
 
         driver.findElement(account).click();
+
+        Thread.sleep(5000);
+
     }
 
-    public void logout() throws InterruptedException {
+    // ==========================
+    // Login thất bại
+    // ==========================
 
-        Thread.sleep(2000);
+// ==========================
+// Truy cập trực tiếp Timetable
+// ==========================
 
-        driver.findElement(btnDangXuat).click();
-    }
+public void accessTimetableDirectly() {
 
-    public boolean isLogoutSuccess() {
+    driver.get("https://cntttest.vanlanguni.edu.vn:18081/Phancong02/Timetable");
 
-        return driver.getCurrentUrl().contains("Login")
-                || driver.getPageSource().contains("Đăng nhập");
-    }
+}
+    // ==========================
+    // Kiểm tra Login thành công
+    // ==========================
+
+public boolean isLoginSuccess() {
+
+    return driver.getCurrentUrl().contains("/Timetable");
+
+}
+
+// ==========================
+// Kiểm tra bị chuyển về Login
+// ==========================
+
+public boolean isRedirectToLogin() {
+
+    return driver.getCurrentUrl().contains("Login")
+            || driver.getPageSource().contains("Đăng nhập");
+
+}
+
 }
