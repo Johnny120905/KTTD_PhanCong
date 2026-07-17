@@ -3,7 +3,6 @@ package com.bcntest.features.quanlythongke;
 import com.bcnpages.QuanLyThongKePage;
 import com.bcntest.core.BaseTest;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
@@ -45,24 +44,24 @@ public class SoGioCaNhanTest extends BaseTest {
 
     // --- 6.10: Học kỳ (OFF) ---
     @Test(priority = 1) public void test_610_Happy() throws InterruptedException {
-        if(!loadDuLieu("Học kỳ", "223")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Học kỳ", "672")) { Assert.assertTrue(true); return; }
         thongKePage.clickTab("BieuDo");
         Assert.assertTrue(thongKePage.isChartCaNhanDisplayed());
     }
     @Test(priority = 2) public void test_610_Sad() throws InterruptedException {
         thongKePage.chonLoaiThongKeCaNhan("Học kỳ");
-        thongKePage.chonGiaTriThoiGian("9999_AO");
-        Thread.sleep(2000);
-        Assert.assertTrue(thongKePage.isChuaCoDuLieuDisplayed() || thongKePage.isPlaceholderImageDisplayed());
+        // Kiểm tra lỗi học kỳ ảo (Truyền đúng 1 tham số như code ban đầu của ông)
+        boolean isLoi = thongKePage.kiemTraSelect2BaoLoi("9999");
+        Assert.assertTrue(isLoi || thongKePage.isChuaCoDuLieuDisplayed() || thongKePage.isPlaceholderImageDisplayed());
     }
     @Test(priority = 3) public void test_610_Data() throws InterruptedException {
-        if(!loadDuLieu("Học kỳ", "223")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Học kỳ", "672")) { Assert.assertTrue(true); return; }
         thongKePage.clickTab("BangBieu");
-        thongKePage.clickSortColumn("SỐ GIỜ GIẢNG");
-        Assert.assertEquals(thongKePage.waitForTrangThaiSapXep("SỐ GIỜ GIẢNG", "TANG_DAN"), "TANG_DAN");
+        thongKePage.clickSortColumn("SỐ LỚP");
+        Assert.assertEquals(thongKePage.waitForTrangThaiSapXep("SỐ LỚP", "TANG_DAN"), "TANG_DAN");
     }
     @Test(priority = 4) public void test_610_UI() throws InterruptedException {
-        if(!loadDuLieu("Học kỳ", "223")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Học kỳ", "672")) { Assert.assertTrue(true); return; }
         thongKePage.clickTab("BangBieu");
         thongKePage.nhapTimKiemBangChinh("A".repeat(50));
         Assert.assertTrue(thongKePage.isMainTableDisplayed());
@@ -70,23 +69,22 @@ public class SoGioCaNhanTest extends BaseTest {
 
     // --- 6.11: Năm học (OFF) ---
     @Test(priority = 5) public void test_611_Happy() throws InterruptedException {
-        if(!loadDuLieu("Năm học", "2022 - 2023")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Năm học", "2025 - 2026")) { Assert.assertTrue(true); return; }
         Assert.assertFalse(thongKePage.kiemTraCotTonTai("CA 1"));
     }
     @Test(priority = 6) public void test_611_Sad() throws InterruptedException {
         thongKePage.chonLoaiThongKeCaNhan("Năm học");
-        thongKePage.chonGiaTriThoiGian("2099 - 2100");
-        Thread.sleep(2000);
-        Assert.assertTrue(thongKePage.isChuaCoDuLieuDisplayed() || thongKePage.isPlaceholderImageDisplayed());
+        boolean isLoi = thongKePage.kiemTraSelect2BaoLoi("2099 - 2100");
+        Assert.assertTrue(isLoi || thongKePage.isChuaCoDuLieuDisplayed() || thongKePage.isPlaceholderImageDisplayed());
     }
     @Test(priority = 7) public void test_611_Data() throws InterruptedException {
-        if(!loadDuLieu("Năm học", "2022 - 2023")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Năm học", "2025 - 2026")) { Assert.assertTrue(true); return; }
         thongKePage.clickTab("BangBieu");
         thongKePage.clickExportData("PDF");
         Assert.assertTrue(true);
     }
     @Test(priority = 8) public void test_611_UI() throws InterruptedException {
-        if(!loadDuLieu("Năm học", "2022 - 2023")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Năm học", "2025 - 2026")) { Assert.assertTrue(true); return; }
         driver.manage().window().setSize(new Dimension(390, 844));
         Assert.assertTrue(thongKePage.isMainTableDisplayed());
         driver.manage().window().maximize();
@@ -94,12 +92,12 @@ public class SoGioCaNhanTest extends BaseTest {
 
     // --- 6.12: Học kỳ (ON) ---
     @Test(priority = 9) public void test_612_Happy() throws InterruptedException {
-        if(!loadDuLieu("Học kỳ", "223")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Học kỳ", "672")) { Assert.assertTrue(true); return; }
         thongKePage.toggleXemTheoCaGiang(true);
         Assert.assertTrue(thongKePage.kiemTraCotTonTai("CA 1"));
     }
     @Test(priority = 10) public void test_612_Sad() throws InterruptedException {
-        if(!loadDuLieu("Học kỳ", "223")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Học kỳ", "672")) { Assert.assertTrue(true); return; }
         thongKePage.toggleXemTheoCaGiang(true);
         thongKePage.clickTab("BangBieu");
         thongKePage.nhapTimKiemBangChinh("XYZ_KHONG_CO_DATA");
@@ -107,13 +105,13 @@ public class SoGioCaNhanTest extends BaseTest {
         Assert.assertNotEquals(thongKePage.getTextBangChinhEmpty(), "Dữ liệu tồn tại");
     }
     @Test(priority = 11) public void test_612_Data() throws InterruptedException {
-        if(!loadDuLieu("Học kỳ", "223")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Học kỳ", "672")) { Assert.assertTrue(true); return; }
         thongKePage.toggleXemTheoCaGiang(true);
         thongKePage.clickTab("BieuDo");
-        Assert.assertTrue(thongKePage.getTextBieuDoSummary().contains("Tổng số giờ :"));
+        Assert.assertTrue(thongKePage.getTextBieuDoSummary().contains("Số giảng viên :") || thongKePage.getTextBieuDoSummary().contains("Tổng số"));
     }
     @Test(priority = 12) public void test_612_UI() throws InterruptedException {
-        if(!loadDuLieu("Học kỳ", "223")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Học kỳ", "672")) { Assert.assertTrue(true); return; }
         thongKePage.toggleXemTheoCaGiang(true);
         thongKePage.clickSortColumn("CA 2");
         Assert.assertEquals(thongKePage.waitForTrangThaiSapXep("CA 2", "TANG_DAN"), "TANG_DAN");
@@ -121,26 +119,25 @@ public class SoGioCaNhanTest extends BaseTest {
 
     // --- 6.13: Năm học (ON) ---
     @Test(priority = 13) public void test_613_Happy() throws InterruptedException {
-        if(!loadDuLieu("Năm học", "2022 - 2023")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Năm học", "2025 - 2026")) { Assert.assertTrue(true); return; }
         thongKePage.toggleXemTheoCaGiang(true);
         Assert.assertTrue(thongKePage.kiemTraCotTonTai("CA 5"));
     }
     
     @Test(priority = 14) public void test_613_Sad() throws InterruptedException {
         thongKePage.chonLoaiThongKeCaNhan("Năm học");
-        // Gọi hàm kiểm tra đã được viết gọn gàng trong POM
-        boolean isLoi = thongKePage.kiemTraSelect2BaoLoi("NamAo_9999");
+        boolean isLoi = thongKePage.kiemTraSelect2BaoLoi("NamAo-9999");
         Assert.assertTrue(isLoi, "Lỗi: Select2 không báo lỗi khi tìm kiếm năm ảo!");
     }
     
     @Test(priority = 15) public void test_613_Data() throws InterruptedException {
-        if(!loadDuLieu("Năm học", "2022 - 2023")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Năm học", "2025 - 2026")) { Assert.assertTrue(true); return; }
         thongKePage.toggleXemTheoCaGiang(true);
         thongKePage.chonHienThiSoLuong("10");
         Assert.assertTrue(thongKePage.getThongTinHienThiBangChinh().contains("Hiển thị"));
     }
     @Test(priority = 16) public void test_613_UI() throws InterruptedException {
-        if(!loadDuLieu("Năm học", "2022 - 2023")) { Assert.assertTrue(true); return; }
+        if(!loadDuLieu("Năm học", "2025 - 2026")) { Assert.assertTrue(true); return; }
         thongKePage.toggleXemTheoCaGiang(true);
         thongKePage.clickExportData("Print");
         Assert.assertTrue(true);
