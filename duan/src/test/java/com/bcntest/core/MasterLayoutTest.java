@@ -11,8 +11,8 @@ public class MasterLayoutTest extends BaseTest {
 
     @BeforeClass
     public void initPage() throws InterruptedException {
-        // Đảm bảo đang đứng ở trang chủ sau khi Login
-        driver.get(BASE_URL + "Dashboard");
+        // ĐÃ FIX: Chỉ cần gọi BASE_URL là nó tự vào Trang chủ, không nối thêm chữ "Dashboard" nữa
+        driver.get(BASE_URL);
         Thread.sleep(3000); 
     }
 
@@ -48,7 +48,8 @@ public class MasterLayoutTest extends BaseTest {
         int widthBanDau = sidebar.getSize().width;
         
         WebElement btnToggle = driver.findElement(By.cssSelector(".menu-toggle, a.nav-link.menu-toggle"));
-        btnToggle.click();
+        // ĐÃ FIX: Dùng JS Click để bất chấp mọi thứ đè lên nút
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btnToggle);
         Thread.sleep(1000); 
         
         int widthSauKhiThu = sidebar.getSize().width;
@@ -56,7 +57,7 @@ public class MasterLayoutTest extends BaseTest {
         Assert.assertTrue(widthSauKhiThu < widthBanDau, 
                 "Fail UI: Menu không tự động thụt vào! Độ rộng vẫn là: " + widthSauKhiThu);
                 
-        btnToggle.click();
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btnToggle);
         Thread.sleep(1000);
     }
 

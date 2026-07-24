@@ -47,7 +47,9 @@ public class BaseTest {
 
         ChromeOptions options = new ChromeOptions();
         options.setAcceptInsecureCerts(true);
-        options.setPageLoadStrategy(PageLoadStrategy.EAGER);
+        
+        // TỐI ƯU TỐC ĐỘ 1: Không đợi web load xong 100% rác, thấy giao diện là chạy luôn!
+        options.setPageLoadStrategy(PageLoadStrategy.NONE); 
 
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--allow-insecure-localhost");
@@ -59,6 +61,10 @@ public class BaseTest {
         options.addArguments("--no-default-browser-check");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--remote-debugging-port=9222"); // Chống Crash
+        
+        // (Tùy chọn) Bật dòng dưới lên nếu muốn Bot chạy ẩn danh, tốc độ sẽ tăng X2 lần!
+        // options.addArguments("--headless=new"); 
 
         options.addArguments("--user-data-dir=" + PROFILE_DIR);
         options.addArguments("--profile-directory=" + PROFILE_NAME);
@@ -71,10 +77,12 @@ public class BaseTest {
         options.setExperimentalOption("prefs", prefs);
 
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(40));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(15)); // Giảm thời gian chờ chết xuống 15s
 
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+        
+        // TỐI ƯU TỐC ĐỘ 2: Tắt hoàn toàn Implicit Wait (Chờ ngầm). Không cho phép ngâm code!
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(0));
 
         driver.get(BASE_URL);
         Thread.sleep(3000);
@@ -177,5 +185,22 @@ public class BaseTest {
             lastWindow = window;
         }
         driver.switchTo().window(lastWindow);
+    }
+    
+    @org.testng.annotations.AfterMethod(alwaysRun = true)
+    public void donDepRacGiaoDien() {
+        try {
+            // Quét sạch mọi popup, modal, thông báo lỗi còn kẹt lại trên màn hình sau mỗi Test Case
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("document.querySelectorAll('.swal2-container, .modal-backdrop, .popover, .toast').forEach(e => e.remove());");
+            js.executeScript("window.scrollTo(0, 0);");
+        } catch (Exception e) {}
+    }
+
+    // TỐI ƯU TỐC ĐỘ 3: Hàm chờ thông minh. Gọi hàm này thay vì dùng Thread.sleep(2000)
+    public void choTrangLoadXong() {
+        new WebDriverWait(driver, Duration.ofSeconds(15)).until(
+            webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete")
+        );
     }
 }

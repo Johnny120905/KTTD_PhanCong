@@ -1,19 +1,68 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="VLU_Automation_Suite" verbose="1">
+<!-- Thêm preserve-order="true" ở Suite để khóa luồng tổng -->
+<suite name="VLU_Automation_Suite" verbose="1" preserve-order="true">
 
-    <!-- BƯỚC 1: Quét toàn bộ Giao diện khung (Global UI) trước -->
-    <test name="Test_GiaoDien_ToanCuc">
+    <!-- 1. Test Master Layout (Khung giao diện chung) -->
+    <test name="01_Test_MasterLayout" preserve-order="true">
         <classes>
             <class name="com.bcntest.core.MasterLayoutTest" />
         </classes>
     </test>
 
-    <!-- BƯỚC 2: Test Logic và UI riêng của chức năng Quản lý Người dùng -->
-    <test name="Test_ChucNang_NguoiDung">
-        <classes>
-            <class name="com.bcntest.features.quanlynguoidung.TaoNguoiDungTest" />
-            <!-- Sau này ông code thêm chức năng nào (Xem, Xóa, Sửa), cứ copy thêm thẻ <class> dán nối tiếp vào đây -->
-        </classes>
+    <!-- 2. Test Quản lý Đăng nhập / Đăng xuất -->
+    <test name="02_Test_DangNhapXuat" preserve-order="true">
+        <packages>
+            <package name="com.bcntest.features.quanlydangnhapxuat" />
+        </packages>
+    </test>
+
+    <!-- 3. Test Quản lý Người dùng -->
+    <test name="03_Test_NguoiDung" preserve-order="true">
+        <packages>
+            <package name="com.bcntest.features.quanlynguoidung" />
+        </packages>
+    </test>
+
+    <!-- 4. Test Quản lý Học kỳ -->
+    <test name="04_Test_HocKy" preserve-order="true">
+        <packages>
+            <package name="com.bcntest.features.quanlyhocky" />
+        </packages>
+    </test>
+
+    <!-- 5. Test Quản lý Ngành học -->
+    <test name="05_Test_NganhHoc" preserve-order="true">
+        <packages>
+            <package name="com.bcntest.features.quanlynganhhoc" />
+        </packages>
+    </test>
+
+    <!-- 6. Test Quản lý Thời khóa biểu -->
+    <test name="06_Test_ThoiKhoaBieu" preserve-order="true">
+        <packages>
+            <package name="com.bcntest.features.quanlythoikhoabieu" />
+        </packages>
+    </test>
+
+    <!-- 7. Test Quản lý Thống kê -->
+    <test name="07_Test_ThongKe" preserve-order="true">
+        <packages>
+            <package name="com.bcntest.features.quanlythongke" />
+        </packages>
+    </test>
+
+    <!-- 8. Test Quản lý Thù lao (Cấp bậc, Đơn giá, Môn học, v.v.) -->
+    <test name="08_Test_ThuLao" preserve-order="true">
+        <packages>
+            <package name="com.bcntest.features.quanlythulao" />
+        </packages>
+    </test>
+
+    <!-- 9. Test Quản lý Hồ sơ -->
+    <test name="09_Test_HoSo" preserve-order="true">
+        <packages>
+            <package name="com.bcntest.features.quanlyhoso" />
+        </packages>
     </test>
 
 </suite>

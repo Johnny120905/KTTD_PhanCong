@@ -111,8 +111,12 @@ public class XemTKBCaNhanTest extends BaseTest {
         
         String chuoiSieuDai = "A".repeat(500);
         
-        ((JavascriptExecutor) driver).executeScript("$('#lecturer').select2('open');");
+        // ĐÃ FIX: Chờ trang load xong và thêm try-catch hoặc kiểm tra an toàn cho jQuery
+        choTrangLoadXong();
+        Thread.sleep(1000); 
+        ((JavascriptExecutor) driver).executeScript("if(window.jQuery) { $('#lecturer').select2('open'); }");
         Thread.sleep(500);
+        
         WebElement searchInput = driver.findElement(By.cssSelector("input.select2-search__field"));
         searchInput.clear();
         searchInput.sendKeys(chuoiSieuDai);

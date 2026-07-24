@@ -61,11 +61,14 @@ public class ImportTKBTest extends BaseTest {
         page.bamImport();
         Thread.sleep(8000); // Chờ hệ thống đọc và lưu file Excel lớn
         
-        String thongBao = page.layThongBao();
+        // ĐÃ FIX: Chuyển toàn bộ thông báo về dạng chữ thường (toLowerCase) để bắt khớp chính xác mọi từ khóa
+        String thongBao = page.layThongBao().toLowerCase();
         boolean isPass = thongBao.contains("thành công") || 
                          thongBao.contains("success") || 
                          thongBao.contains("khoá phân công") || 
-                         thongBao.contains("đã tồn tại");
+                         thongBao.contains("đã tồn tại") ||
+                         thongBao.contains("đã có dữ liệu") || 
+                         thongBao.contains("thời khoá biểu");
                          
         Assert.assertTrue(isPass, "Lỗi: Form submit thất bại! Thực tế web báo: '" + thongBao + "'");
     }

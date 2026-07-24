@@ -82,29 +82,41 @@ public class TimKiemNganhHocTest extends BaseTest {
     }
 
     // ==========================================
+    // TỐI ƯU HÓA: Hàm chờ thông minh (Smart Wait)
+    // ==========================================
+    private void chonSoLuongVaChoLoad(String soLuong) {
+        String thongTinCu = nganhHocPage.layThongTinPhanTrang();
+        nganhHocPage.chonSoLuongHienThi(soLuong);
+        
+        // Quét liên tục 0.2s một lần (tối đa quét 10 lần), đổi text là chạy tiếp ngay!
+        for (int i = 0; i < 10; i++) {
+            try {
+                if (!nganhHocPage.layThongTinPhanTrang().equals(thongTinCu)) break;
+                Thread.sleep(200);
+            } catch (Exception e) {}
+        }
+    }
+
+    // ==========================================
     // 4. LUỒNG GIAO DIỆN (UI/UX)
     // ==========================================
     @Test(priority = 4)
     public void testF35_LuongUI_DropdownHienThiSoLuong() throws InterruptedException {
-        System.out.println("--- LUỒNG UI: KIỂM TRA NÚT DROPDOWN HIỂN THỊ ---");
+        System.out.println("--- LUỒNG UI: KIỂM TRA NÚT DROPDOWN HIỂN THỊ CHẠY SIÊU TỐC ---");
         
-        nganhHocPage.nhapTuKhoaTimKiem("");
+        nganhHocPage.nhapTuKhoaTimKiem(""); // Reset tìm kiếm
         Thread.sleep(500);
 
-        nganhHocPage.chonSoLuongHienThi("10");
-        Thread.sleep(500); 
+        chonSoLuongVaChoLoad("10");
         Assert.assertTrue(nganhHocPage.laySoLuongNganhHocHienThi() <= 10, "Lỗi UI: Bảng hiển thị nhiều hơn 10 dòng!");
 
-        nganhHocPage.chonSoLuongHienThi("25");
-        Thread.sleep(500); 
+        chonSoLuongVaChoLoad("25");
         Assert.assertTrue(nganhHocPage.laySoLuongNganhHocHienThi() <= 25, "Lỗi UI: Bảng hiển thị nhiều hơn 25 dòng!");
 
-        nganhHocPage.chonSoLuongHienThi("50");
-        Thread.sleep(500); 
+        chonSoLuongVaChoLoad("50");
         Assert.assertTrue(nganhHocPage.laySoLuongNganhHocHienThi() <= 50, "Lỗi UI: Bảng hiển thị nhiều hơn 50 dòng!");
 
-        nganhHocPage.chonSoLuongHienThi("-1");
-        Thread.sleep(1000); 
+        chonSoLuongVaChoLoad("-1");
         Assert.assertTrue(nganhHocPage.laySoLuongNganhHocHienThi() >= 0, "Lỗi UI: Server lỗi render Tất cả!");
     }
 
@@ -113,6 +125,8 @@ public class TimKiemNganhHocTest extends BaseTest {
         System.out.println("--- LUỒNG UI: PHÓNG TO, THU NHỎ, LƯỚT TRANG ---");
         
         try {
+            // ĐÃ FIX: Đưa cửa sổ về tọa độ (0,0) để xả Maximize trước khi Resize
+            driver.manage().window().setPosition(new org.openqa.selenium.Point(0, 0));
             driver.manage().window().setSize(new Dimension(375, 812));
             Thread.sleep(600); 
             
