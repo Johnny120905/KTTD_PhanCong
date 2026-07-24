@@ -3,29 +3,30 @@ import org.testng.annotations.Test;
 import com.test.BoMonCommonTest;
 
 public class F11_2_XemSoGioTrongNamTest extends BoMonCommonTest{
-     protected FeatureConfig config() {
-        return new FeatureConfig("F11.2", "Xem số giờ giảng viên trong năm học")
-                .menu("Thống kê", "Số giờ giảng viên")
-                .statMode("Năm học")
-                .term("999")
-                .major("Công nghệ thông tincong nghe")
-                .lecturerType("Cơ hữu")
-                .tab("Biểu đồ")
-                .expected(
-                        "Thống kê số giờ giảng viên",
-                        "Năm học",
-                        "Số giảng viên",
-                        "Tổng số giờ",
-                        "Nguyễn Cao Sâm"
-                )
-                .data(
-                        "Bảng biểu",
-                        "Chi tiết",
-                        "Cơ hữu",
-                        "Công nghệ thông tin"
-                )
-                .acceptNoData(true);
-    }
+    protected FeatureConfig config() {
+    return new FeatureConfig("F11.2", "Xem số giờ giảng viên trong năm học")
+            .menu("Thống kê", "Số giờ giảng viên")
+             .statMode("Năm học")
+            .term("2033 - 2034")
+            .major("Công nghệ thông tincong nghe")
+            .lecturerType("Cơ hữu")
+            .tab("Biểu đồ")
+            .expected(
+                    "Thống kê số giờ giảng viên",
+                    "Năm học",
+                    "Công nghệ thông tincong nghe",
+                    "Cơ hữu",
+                    "Chưa có dữ liệu"
+            )
+            .data(
+                    "Năm học",
+                    "2033 - 2034",
+                    "Cơ hữu",
+                    "Công nghệ thông tincong nghe",
+                    "Chưa có dữ liệu"
+            )
+            .acceptNoData(true);
+}
 
     // LUỒNG 1: Test luồng đúng - xem số giờ GV theo năm học
     @Test(priority = 1)

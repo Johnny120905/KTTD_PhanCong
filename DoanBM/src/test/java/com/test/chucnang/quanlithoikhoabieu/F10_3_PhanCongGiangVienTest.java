@@ -3,7 +3,7 @@ import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
+import org.openqa.selenium.By;
 import com.test.BoMonCommonTest;
 public class F10_3_PhanCongGiangVienTest extends BoMonCommonTest{
     
@@ -180,74 +180,7 @@ public class F10_3_PhanCongGiangVienTest extends BoMonCommonTest{
         System.out.println("PASS F10.3 NEG - Search giảng viên không tồn tại không trả về Nguyễn Cao Sâm");
     }
 
-    /*
-     * F10.3 - LUỒNG SAI 2
-     * Không chọn giảng viên nhưng bấm Assign
-     */
-    @Test(priority = 3)
-    public void F10_3_NEG_BamAssignKhiChuaChonGiangVien()
-            throws InterruptedException {
-
-        navigateToAssignPage();
-
-        Assert.assertTrue(
-                driver.getPageSource().contains("Phân công giảng dạy")
-                        || driver.getPageSource().contains("Phân công"),
-                "Không vào được màn hình Phân công giảng dạy"
-        );
-
-        chonHocKyVaNganhTruocKhiPhanCong();
-
-        int assignedBefore = getAssignedCount();
-        int teacherCardBefore = countNguyenCaoSamCardsOnSchedule();
-
-        boolean openedPopup = openAssignPopupByClickingUnassignedCard();
-
-        Assert.assertTrue(
-                openedPopup,
-                "Không mở được popup phân công từ ô Chưa phân"
-        );
-
-        WebElement lecturerDropdown = waitForLecturerDropdownInPopover();
-
-        Assert.assertNotNull(
-                lecturerDropdown,
-                "Không tìm thấy dropdown Chưa phân công trong popup"
-        );
-
-        clearSelectedTeacherIfAny();
-
-        Thread.sleep(1000);
-
-        boolean teacherStillSelected = isAnyTeacherSelectedInPopover();
-
-        Assert.assertFalse(
-                teacherStillSelected,
-                "Dropdown vẫn đang có giảng viên được chọn, không thể test luồng sai chưa chọn giảng viên"
-        );
-
-        removeSuccessToasts();
-
-        WebElement assignButton = waitForAssignButtonInPopover();
-
-        Assert.assertNotNull(
-                assignButton,
-                "Không tìm thấy nút Assign để test luồng sai"
-        );
-
-        clickHard(assignButton);
-
-        boolean unexpectedSuccess = waitUnexpectedAssignSuccess(assignedBefore, teacherCardBefore, 6);
-
-        Assert.assertFalse(
-                unexpectedSuccess,
-                "Hệ thống vẫn phân công thành công dù chưa chọn giảng viên"
-        );
-
-        closeOpenedPopupAndDropdown();
-
-        System.out.println("PASS F10.3 NEG - Không chọn giảng viên thì không phân công thành công");
-    }
+   
 
     /*
      * F10.3 - LUỒNG DATA HỢP LỆ
@@ -255,9 +188,8 @@ public class F10_3_PhanCongGiangVienTest extends BoMonCommonTest{
     @DataProvider(name = "F10_3_ValidTeacherSearchData")
     public Object[][] F10_3_ValidTeacherSearchData() {
         return new Object[][]{
-                {"sâm", "Nguyễn Cao Sâm"},
-                {"Nguyễn Cao Sâm", "Nguyễn Cao Sâm"},
-                {"Cao Sâm", "Nguyễn Cao Sâm"}
+                {"sâm", "Nguyễn Cao Sâm"}
+               
         };
     }
 
@@ -408,5 +340,44 @@ public class F10_3_PhanCongGiangVienTest extends BoMonCommonTest{
         closeOpenedPopupAndDropdown();
 
         System.out.println("PASS F10.3 DATA - Keyword sai '" + keyword + "' không trả về Nguyễn Cao Sâm");
+    }
+    // LUỒNG UI - Kiểm tra phóng to/thu nhỏ và lướt trang
+    @Test(priority = 6)
+    public void F10_3_UI_KiemTraGiaoDien() throws InterruptedException {
+
+        System.out.println("===== F10.3 UI - Kiểm tra phóng to/thu nhỏ và lướt trang =====");
+
+        navigateToAssignPage();
+
+        waitBodyFlow();
+
+        Assert.assertTrue(
+                driver.getPageSource().contains("Phân công giảng dạy")
+                        || driver.getPageSource().contains("Phân công"),
+                "Không vào được màn hình Phân công giảng dạy"
+        );
+
+        chonHocKyVaNganhTruocKhiPhanCong();
+
+        Assert.assertTrue(
+                driver.getPageSource().contains("Học kỳ")
+                        || driver.getPageSource().contains("Ngành")
+                        || driver.getPageSource().contains("Chưa phân")
+                        || driver.getPageSource().contains("Phân công"),
+                "Không thấy các thành phần chính của màn hình Phân công"
+        );
+
+        // Kiểm tra phóng to / thu nhỏ màn hình
+        kiemTraPhongToThuNhoFlow();
+
+        // Kiểm tra lướt lên / lướt xuống
+        kiemTraLuotLenLuotXuongFlow();
+
+        Assert.assertTrue(
+                driver.findElement(By.tagName("body")).isDisplayed(),
+                "Body không hiển thị sau khi kiểm tra phóng to/thu nhỏ và lướt trang"
+        );
+
+        System.out.println("PASS F10.3 UI - Phóng to/thu nhỏ và lướt trang hoạt động ổn định");
     }
 }

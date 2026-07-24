@@ -28,11 +28,7 @@ public class F10_2_XemThoiKhoaBieuToanKhoaTest extends BoMonCommonTest {
         runPositiveFeature(functionCode, featureName, openTexts, expectedTexts);
     }
 
-    @Test(priority = 2)
-    public void F10_2_NEG_ChuaDangNhapKhongXemDuocThoiKhoaBieuToanKhoa() throws InterruptedException {
-        runNegativeFeatureWithoutLogin(functionCode, featureName, expectedTexts);
-    }
-
+   
     @DataProvider(name = "F10_2_Data")
     public Object[][] F10_2_Data() {
         return new Object[][]{

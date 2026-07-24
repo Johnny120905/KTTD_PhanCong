@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [BoMon Full Test Suite]" guice-stage="DEVELOPMENT">
+  <test thread-count="5" name="BoMon Full Flow(failed)">
+    <classes>
+      <class name="com.test.chucnang.quanlithulao.F12_1_XemDanhSachThuLaoGiangVienTest">
+        <methods>
+          <include name="F12_1_POS_XemDanhSachThuLaoGiangVien"/>
+          <include name="tearDownSuite"/>
+          <include name="F12_1_DATA_KiemTraDuLieuThuLaoGiangVien"/>
+          <include name="F12_1_UI_KiemTraGiaoDienThuLaoGiangVien"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithulao.F12_1_XemDanhSachThuLaoGiangVienTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_3_XemSoMonHocTrongHocKyTest">
+        <methods>
+          <include name="F11_3_UI_KiemTraGiaoDien"/>
+          <include name="tearDownSuite"/>
+          <include name="F11_3_DATA_KiemTraSoMonHocTrongHocKy"/>
+          <include name="F11_3_POS_LuongDung_XemSoMonHocTrongHocKy"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_3_XemSoMonHocTrongHocKyTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_1_XemSoGioTrongHocKyTest">
+        <methods>
+          <include name="F11_1_UI_KiemTraGiaoDien"/>
+          <include name="F11_1_DATA_KiemTraSoGioTrongHocKy"/>
+          <include name="tearDownSuite"/>
+          <include name="F11_1_POS_LuongDung_XemSoGioTrongHocKy"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_1_XemSoGioTrongHocKyTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_12_XemSoGioCaNhanTheoTietHocTrongHocKyTest">
+        <methods>
+          <include name="F11_12_UI_KiemTraGiaoDien"/>
+          <include name="F11_12_POS_LuongDung_XemSoGioCaNhanTheoTietHocTrongHocKy"/>
+          <include name="tearDownSuite"/>
+          <include name="F11_12_DATA_KiemTraSoGioCaNhanTheoTietHocTrongHocKy"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_12_XemSoGioCaNhanTheoTietHocTrongHocKyTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_2_XemSoGioTrongNamTest">
+        <methods>
+          <include name="F11_2_UI_KiemTraGiaoDien"/>
+          <include name="F11_2_DATA_KiemTraSoGioTrongNam"/>
+          <include name="F11_2_POS_LuongDung_XemSoGioTrongNam"/>
+          <include name="tearDownSuite"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_2_XemSoGioTrongNamTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_6_XemSoGioTheoTietHocTrongNamTest">
+        <methods>
+          <include name="F11_6_DATA_KiemTraSoGioTheoTietHocTrongNam"/>
+          <include name="F11_6_UI_KiemTraGiaoDien"/>
+          <include name="F11_6_POS_LuongDung_XemSoGioTheoTietHocTrongNam"/>
+          <include name="tearDownSuite"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_6_XemSoGioTheoTietHocTrongNamTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_10_XemSoGioCaNhanTrongHocKyTest">
+        <methods>
+          <include name="F11_10_DATA_KiemTraSoGioCaNhanTrongHocKy"/>
+          <include name="F11_10_UI_KiemTraGiaoDien"/>
+          <include name="F11_10_POS_LuongDung_XemSoGioCaNhanTrongHocKy"/>
+          <include name="tearDownSuite"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_10_XemSoGioCaNhanTrongHocKyTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_4_XemSoMonHocTrongNamTest">
+        <methods>
+          <include name="F11_4_POS_LuongDung_XemSoMonHocTrongNam"/>
+          <include name="tearDownSuite"/>
+          <include name="F11_4_UI_KiemTraGiaoDien"/>
+          <include name="F11_4_DATA_KiemTraSoMonHocTrongNam"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_4_XemSoMonHocTrongNamTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_13_XemSoGioCaNhanTheoTietHocTrongNamTest">
+        <methods>
+          <include name="F11_13_DATA_KiemTraSoGioCaNhanTheoTietHocTrongNam"/>
+          <include name="F11_13_UI_KiemTraGiaoDien"/>
+          <include name="F11_13_POS_LuongDung_XemSoGioCaNhanTheoTietHocTrongNam"/>
+          <include name="tearDownSuite"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_13_XemSoGioCaNhanTheoTietHocTrongNamTest -->
+      <class name="com.test.chucnang.quanlithoikhoabieu.F10_3_PhanCongGiangVienTest">
+        <methods>
+          <include name="F10_3_DATA_SearchGiangVienKhongHopLe" invocation-numbers="0 1 2"/>
+          <include name="F10_3_UI_KiemTraGiaoDien"/>
+          <include name="F10_3_DATA_SearchGiangVienHopLe" invocation-numbers="0"/>
+          <include name="tearDownSuite"/>
+          <include name="F10_3_NEG_SearchGiangVienKhongTonTai"/>
+          <include name="F10_3_POS_PhanCongNguyenCaoSamThanhCong"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithoikhoabieu.F10_3_PhanCongGiangVienTest -->
+      <class name="com.test.chucnang.quanlithoikhoabieu.F10_2_XemThoiKhoaBieuToanKhoaTest">
+        <methods>
+          <include name="F10_2_DATA_XemThoiKhoaBieuToanKhoa" invocation-numbers="0 1 2"/>
+          <include name="tearDownSuite"/>
+          <include name="F10_2_POS_XemThoiKhoaBieuToanKhoaThanhCong"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithoikhoabieu.F10_2_XemThoiKhoaBieuToanKhoaTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_11_XemSoGioCaNhanTrongNamTest">
+        <methods>
+          <include name="F11_11_UI_KiemTraGiaoDien"/>
+          <include name="F11_11_POS_LuongDung_XemSoGioCaNhanTrongNam"/>
+          <include name="F11_11_DATA_KiemTraSoGioCaNhanTrongNam"/>
+          <include name="tearDownSuite"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_11_XemSoGioCaNhanTrongNamTest -->
+      <class name="com.test.chucnang.quanlihosonguoidung.F13_1_CapNhatHoSoNguoiDungTest">
+        <methods>
+          <include name="F13_1_DATA_KiemTraDuLieuHoSoNguoiDung" invocation-numbers="0"/>
+          <include name="tearDownSuite"/>
+          <include name="F13_1_UI_KiemTraGiaoDienCapNhatHoSo"/>
+          <include name="setUpSuite"/>
+          <include name="F13_1_POS_CapNhatHoSoNguoiDungThanhCong"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlihosonguoidung.F13_1_CapNhatHoSoNguoiDungTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_5_XemSoGioTheoTietHocTrongHocKyTest">
+        <methods>
+          <include name="F11_5_DATA_KiemTraSoGioTheoTietHocTrongHocKy"/>
+          <include name="F11_5_POS_LuongDung_XemSoGioTheoTietHocTrongHocKy"/>
+          <include name="F11_5_UI_KiemTraGiaoDien"/>
+          <include name="tearDownSuite"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_5_XemSoGioTheoTietHocTrongHocKyTest -->
+      <class name="com.test.chucnang.quanlithoikhoabieu.F10_4_XemThoiKhoaBieuTest">
+        <methods>
+          <include name="F10_4_DATA_KiemTraDuLieuThoiKhoaBieu"/>
+          <include name="tearDownSuite"/>
+          <include name="F10_4_POS_LuongDung_XemThoiKhoaBieuCaNhan"/>
+          <include name="F10_4_UI_KiemTraGiaoDien"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithoikhoabieu.F10_4_XemThoiKhoaBieuTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_9_XemThongKeGiangVienThinhGiangTest">
+        <methods>
+          <include name="F11_9_DATA_KiemTraThongKeGiangVienThinhGiang"/>
+          <include name="tearDownSuite"/>
+          <include name="F11_9_UI_KiemTraGiaoDien"/>
+          <include name="F11_9_POS_LuongDung_XemThongKeGiangVienThinhGiang"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_9_XemThongKeGiangVienThinhGiangTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_14_XemThoiKhoaBieuGiangVienTest">
+        <methods>
+          <include name="F11_14_DATA_KiemTraDuLieuLichGiangDay"/>
+          <include name="F11_14_UI_KiemTraGiaoDien"/>
+          <include name="tearDownSuite"/>
+          <include name="setUpSuite"/>
+          <include name="F11_14_POS_LuongDung_XemLichGiangDay"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_14_XemThoiKhoaBieuGiangVienTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_7_XemSoGioTheoHeSoThuLaoTrongHocKyTest">
+        <methods>
+          <include name="tearDownSuite"/>
+          <include name="F11_7_POS_LuongDung_XemSoGioQuyDoiTrongHocKy"/>
+          <include name="F11_7_DATA_KiemTraSoGioQuyDoiTrongHocKy"/>
+          <include name="F11_7_UI_KiemTraGiaoDien"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_7_XemSoGioTheoHeSoThuLaoTrongHocKyTest -->
+      <class name="com.test.chucnang.quanlithongke.F11_8_XemSoGioTheoHeSoThuLaoTrongNamTest">
+        <methods>
+          <include name="F11_8_DATA_KiemTraSoGioQuyDoiTrongNam"/>
+          <include name="F11_8_POS_LuongDung_XemSoGioQuyDoiTrongNam"/>
+          <include name="F11_8_UI_KiemTraGiaoDien"/>
+          <include name="tearDownSuite"/>
+          <include name="setUpSuite"/>
+        </methods>
+      </class> <!-- com.test.chucnang.quanlithongke.F11_8_XemSoGioTheoHeSoThuLaoTrongNamTest -->
+    </classes>
+  </test> <!-- BoMon Full Flow(failed) -->
+</suite> <!-- Failed suite [BoMon Full Test Suite] -->

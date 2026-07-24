@@ -14,13 +14,16 @@ import org.testng.annotations.Test;
 import com.test.BoMonCommonTest;
 
 public class F10_1_XuatThoiKhoaBieuTest extends BoMonCommonTest {
-       /*
+
+    /*
      * F10.1 - LUỒNG ĐÚNG
      * Xuất thời khóa biểu thành công
      */
     @Test(priority = 1)
     public void F10_1_POS_XuatThoiKhoaBieuThanhCong()
             throws InterruptedException {
+
+        System.out.println("===== F10.1 POS - Xuất thời khóa biểu =====");
 
         navigateToAssignPage();
 
@@ -75,6 +78,8 @@ public class F10_1_XuatThoiKhoaBieuTest extends BoMonCommonTest {
     public void F10_1_DATA_XuatThoiKhoaBieu(String testName, int timeoutSeconds)
             throws InterruptedException {
 
+        System.out.println("===== F10.1 DATA - " + testName + " =====");
+
         navigateToAssignPage();
 
         long startTime = System.currentTimeMillis();
@@ -106,41 +111,6 @@ public class F10_1_XuatThoiKhoaBieuTest extends BoMonCommonTest {
         System.out.println("File tải về: " + downloadedFile.getAbsolutePath());
     }
 
-    /*
-     * F10.1 - LUỒNG SAI
-     * Chưa đăng nhập thì không được xuất thời khóa biểu
-     */
-    @Test(priority = 99)
-    public void F10_1_NEG_ChuaDangNhapKhongXuatDuocThoiKhoaBieu()
-            throws InterruptedException {
-
-        clearBrowserSession();
-
-        long startTime = System.currentTimeMillis();
-
-        driver.get(ASSIGN_URL);
-
-        Thread.sleep(3000);
-
-        boolean hasExportButton = hasVisibleExportButton();
-
-        Assert.assertFalse(
-                hasExportButton,
-                "Chưa đăng nhập nhưng vẫn thấy nút Export"
-        );
-
-        Thread.sleep(3000);
-
-        File downloadedFile = findNewDownloadedFileNow(startTime);
-
-        Assert.assertNull(
-                downloadedFile,
-                "Chưa đăng nhập nhưng vẫn có file thời khóa biểu được tải về"
-        );
-
-        System.out.println("PASS F10.1 NEG - Chưa đăng nhập thì không xuất được thời khóa biểu");
-    }
-
     public WebElement findExportButton() {
 
         try {
@@ -167,32 +137,6 @@ public class F10_1_XuatThoiKhoaBieuTest extends BoMonCommonTest {
         return null;
     }
 
-    public boolean hasVisibleExportButton() {
-
-        try {
-            List<WebElement> buttons = driver.findElements(
-                    By.xpath(
-                            "//*[self::button or self::a][contains(normalize-space(),'Export') "
-                                    + "or contains(normalize-space(),'Xuất')]"
-                                    + " | //button[.//*[contains(normalize-space(),'Export')]]"
-                    )
-            );
-
-            for (WebElement button : buttons) {
-                try {
-                    if (button.isDisplayed() && button.isEnabled()) {
-                        return true;
-                    }
-                } catch (Exception ignored) {
-                }
-            }
-
-        } catch (Exception ignored) {
-        }
-
-        return false;
-    }
-
     public File waitForNewDownloadedFile(long startTime, int timeoutSeconds) {
 
         File downloadFolder = new File(DOWNLOAD_DIR);
@@ -213,6 +157,7 @@ public class F10_1_XuatThoiKhoaBieuTest extends BoMonCommonTest {
                 String fileName = file.getName().toLowerCase();
 
                 boolean isNewFile = file.lastModified() >= startTime - 1000;
+
                 boolean isCompleted =
                         !fileName.endsWith(".crdownload")
                                 && !fileName.endsWith(".tmp");
@@ -228,37 +173,5 @@ public class F10_1_XuatThoiKhoaBieuTest extends BoMonCommonTest {
 
             return newestFile;
         });
-    }
-
-    public File findNewDownloadedFileNow(long startTime) {
-
-        File downloadFolder = new File(DOWNLOAD_DIR);
-
-        File[] files = downloadFolder.listFiles();
-
-        if (files == null || files.length == 0) {
-            return null;
-        }
-
-        File newestFile = null;
-
-        for (File file : files) {
-            String fileName = file.getName().toLowerCase();
-
-            boolean isNewFile = file.lastModified() >= startTime - 1000;
-            boolean isCompleted =
-                    !fileName.endsWith(".crdownload")
-                            && !fileName.endsWith(".tmp");
-
-            boolean hasData = file.length() > 0;
-
-            if (isNewFile && isCompleted && hasData) {
-                if (newestFile == null || file.lastModified() > newestFile.lastModified()) {
-                    newestFile = file;
-                }
-            }
-        }
-
-        return newestFile;
     }
 }

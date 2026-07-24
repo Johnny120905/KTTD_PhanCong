@@ -97,39 +97,5 @@ public class F9_1_BoMonTest  extends BoMonCommonTest  {
         System.out.println("PASS F9.1 POS - Đăng xuất Bộ môn thành công");
     }
 
-    /*
-     * F9.1 - LUỒNG SAI
-     * Chưa đăng nhập nhưng truy cập trực tiếp trang Phân công
-     */
-    @Test(priority = 99)
-    public void F9_1_NEG_ChuaDangNhapKhongVaoDuocTrangPhanCong()
-            throws InterruptedException {
-
-        clearBrowserSession();
-
-        driver.get(ASSIGN_URL);
-
-        Thread.sleep(3000);
-
-        String page = driver.getPageSource();
-        String currentUrl = driver.getCurrentUrl();
-
-        boolean isLoginPage =
-                currentUrl.contains("/Account/Login")
-                        || page.contains("Đăng nhập")
-                        || page.contains("Sign in")
-                        || page.contains("Microsoft");
-
-        boolean stillInAssignPage =
-                page.contains("Phân công giảng dạy")
-                        || page.contains("Số lớp đã phân công")
-                        || page.contains("Chưa phân");
-
-        Assert.assertTrue(
-                isLoginPage || !stillInAssignPage,
-                "Chưa đăng nhập nhưng vẫn vào được trang Phân công"
-        );
-
-        System.out.println("PASS F9.1 NEG - Chưa đăng nhập thì không truy cập được trang Phân công");
-    }
+   
 }

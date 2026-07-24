@@ -1754,85 +1754,400 @@ public class BoMonCommonTest extends BaseTest {
 
         applyFilterFlow(config);
     }
+    protected boolean chonThongKeTheoFlow(String value) throws InterruptedException {
 
-    protected void applyFilterFlow(FeatureConfig config) throws InterruptedException {
+    if (value == null || value.trim().isEmpty()) {
+        return false;
+    }
 
-        if (config.statMode != null) {
-            selectDropdownByAnyLabelFlow(
-                    new String[]{"Thống kê theo", "Thống kê theo:"},
-                    config.statMode,
-                    false
-            );
+    value = value.trim();
 
-            Thread.sleep(800);
-        }
+    System.out.println("Đang chuyển Thống kê theo sang: " + value);
 
-        if (config.multiTerms != null && config.multiTerms.length > 0) {
-            selectMultiDropdownValuesFlow("Học kỳ", config.multiTerms);
-            Thread.sleep(1000);
-        } else if (config.termValue != null) {
-            selectDropdownByAnyLabelFlow(
-                    new String[]{"Học kỳ", "Năm học"},
-                    config.termValue,
-                    false
-            );
+    if (isThongKeTheoSelectedFlow(value)) {
+        System.out.println("Thống kê theo đã là: " + value);
+        return true;
+    }
 
-            Thread.sleep(1000);
-        }
+    WebElement dropdown = findThongKeTheoDropdownFlow();
 
-        if (config.majorText != null) {
-            selectDropdownByAnyLabelFlow(
-                    new String[]{"Ngành"},
-                    config.majorText,
-                    false
-            );
+    if (dropdown != null) {
+        clickHard(dropdown);
+    } else {
+        boolean clickedByPoint = clickUnderLabelThongKeTheoFlow();
 
-            Thread.sleep(1000);
-        }
-
-        if (config.lecturerTypeText != null) {
-            selectDropdownByAnyLabelFlow(
-                    new String[]{"Loại giảng viên"},
-                    config.lecturerTypeText,
-                    false
-            );
-
-            Thread.sleep(1000);
-        }
-
-        if (config.teacherText != null) {
-            selectDropdownByAnyLabelFlow(
-                    new String[]{"Giảng viên"},
-                    config.teacherSearchText,
-                    false
-            );
-
-            clickOptionByTextFlow(config.teacherText, false);
-
-            Thread.sleep(1200);
-        }
-
-        if (config.weekText != null) {
-            selectDropdownByAnyLabelFlow(
-                    new String[]{"Tuần"},
-                    config.weekText,
-                    false
-            );
-
-            Thread.sleep(1200);
-        }
-
-        if (config.clickStatisticButton) {
-            clickButtonByTextFlow("Thống kê");
-            Thread.sleep(2000);
-        }
-
-        if (config.tabText != null) {
-            clickTextIfExistsFlow(config.tabText);
-            Thread.sleep(1200);
+        if (!clickedByPoint) {
+            System.out.println("Không tìm thấy dropdown Thống kê theo để click");
+            return false;
         }
     }
 
+    Thread.sleep(800);
+
+    try {
+        WebElement active = driver.switchTo().activeElement();
+
+        if (active != null && active.isDisplayed() && active.isEnabled()) {
+            active.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+            active.sendKeys(value);
+            Thread.sleep(700);
+        }
+
+    } catch (Exception ignored) {
+    }
+
+    WebElement option = findOpenedOptionExactFlow(value, 12);
+
+    if (option != null) {
+        clickHard(option);
+    } else {
+        try {
+            driver.switchTo().activeElement().sendKeys(Keys.ENTER);
+        } catch (Exception ignored) {
+        }
+    }
+
+    Thread.sleep(1500);
+
+    boolean ok = isThongKeTheoSelectedFlow(value);
+
+    if (ok) {
+        System.out.println("Đã chuyển Thống kê theo sang: " + value);
+    } else {
+        System.out.println("Chưa xác nhận được dropdown Thống kê theo = " + value);
+    }
+
+    return ok;
+}
+
+protected boolean isThongKeTheoSelectedFlow(String value) {
+
+    try {
+        WebElement label = findSmallLabelByTextFlow("Thống kê theo");
+
+        if (label == null) {
+            return false;
+        }
+
+        Rectangle labelRect = label.getRect();
+
+        List<WebElement> elements = driver.findElements(
+                By.xpath(
+                        "//*[not(self::script) and not(self::style) "
+                                + "and contains(normalize-space(.), " + xpathLiteral(value) + ")]"
+                )
+        );
+
+        for (WebElement element : elements) {
+            try {
+                if (!element.isDisplayed()) {
+                    continue;
+                }
+
+                Rectangle r = element.getRect();
+
+                boolean namTrongDropdownThongKeTheo =
+                        r.getY() >= labelRect.getY()
+                                && r.getY() <= labelRect.getY() + 90
+                                && r.getX() >= labelRect.getX() - 20
+                                && r.getX() <= labelRect.getX() + 430
+                                && r.getWidth() >= 30
+                                && r.getHeight() >= 15;
+
+                if (namTrongDropdownThongKeTheo) {
+                    return true;
+                }
+
+            } catch (Exception ignored) {
+            }
+        }
+
+        if (value.equalsIgnoreCase("Năm học") && findSmallLabelByTextFlow("Năm học") != null) {
+            return true;
+        }
+
+        if (value.equalsIgnoreCase("Học kỳ") && findSmallLabelByTextFlow("Học kỳ") != null) {
+            return true;
+        }
+
+    } catch (Exception ignored) {
+    }
+
+    return false;
+}
+
+protected WebElement findThongKeTheoDropdownFlow() {
+
+    try {
+        WebElement label = findSmallLabelByTextFlow("Thống kê theo");
+
+        if (label == null) {
+            return null;
+        }
+
+        Rectangle labelRect = label.getRect();
+
+        List<WebElement> candidates = driver.findElements(
+                By.xpath(
+                        "//*[(self::div or self::span or self::input) "
+                                + "and not(self::script) and not(self::style)]"
+                )
+        );
+
+        WebElement best = null;
+        int bestArea = 0;
+
+        for (WebElement candidate : candidates) {
+            try {
+                if (!candidate.isDisplayed()) {
+                    continue;
+                }
+
+                Rectangle r = candidate.getRect();
+
+                boolean namGanLabelThongKeTheo =
+                        r.getY() >= labelRect.getY() + 10
+                                && r.getY() <= labelRect.getY() + 90
+                                && r.getX() >= labelRect.getX() - 20
+                                && r.getX() <= labelRect.getX() + 430
+                                && r.getWidth() >= 80
+                                && r.getHeight() >= 20;
+
+                if (!namGanLabelThongKeTheo) {
+                    continue;
+                }
+
+                String className = candidate.getAttribute("class");
+                String role = candidate.getAttribute("role");
+                String text = candidate.getText();
+
+                if (className == null) {
+                    className = "";
+                }
+
+                if (role == null) {
+                    role = "";
+                }
+
+                if (text == null) {
+                    text = "";
+                }
+
+                String lowerClass = className.toLowerCase();
+                String lowerRole = role.toLowerCase();
+
+                boolean coVeLaDropdown =
+                        lowerRole.contains("combobox")
+                                || lowerClass.contains("select")
+                                || lowerClass.contains("dropdown")
+                                || lowerClass.contains("control")
+                                || lowerClass.contains("css-")
+                                || text.contains("Học kỳ")
+                                || text.contains("Năm học");
+
+                if (!coVeLaDropdown) {
+                    continue;
+                }
+
+                int area = r.getWidth() * r.getHeight();
+
+                if (area > bestArea) {
+                    bestArea = area;
+                    best = candidate;
+                }
+
+            } catch (Exception ignored) {
+            }
+        }
+
+        return best;
+
+    } catch (Exception ignored) {
+        return null;
+    }
+}
+
+protected boolean clickUnderLabelThongKeTheoFlow() {
+
+    try {
+        WebElement label = findSmallLabelByTextFlow("Thống kê theo");
+
+        if (label == null) {
+            return false;
+        }
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        Object result = js.executeScript(
+                "const label = arguments[0];"
+                        + "const r = label.getBoundingClientRect();"
+                        + "const points = ["
+                        + "  [r.left + 80, r.bottom + 25],"
+                        + "  [r.left + 180, r.bottom + 25],"
+                        + "  [r.left + 300, r.bottom + 25]"
+                        + "];"
+                        + "for (const p of points) {"
+                        + "  const el = document.elementFromPoint(p[0], p[1]);"
+                        + "  if (el) {"
+                        + "    el.dispatchEvent(new MouseEvent('mouseover', {bubbles:true, cancelable:true, view:window}));"
+                        + "    el.dispatchEvent(new MouseEvent('mousedown', {bubbles:true, cancelable:true, view:window, button:0}));"
+                        + "    el.dispatchEvent(new MouseEvent('mouseup', {bubbles:true, cancelable:true, view:window, button:0}));"
+                        + "    el.dispatchEvent(new MouseEvent('click', {bubbles:true, cancelable:true, view:window, button:0}));"
+                        + "    return true;"
+                        + "  }"
+                        + "}"
+                        + "return false;",
+                label
+        );
+
+        return Boolean.TRUE.equals(result);
+
+    } catch (Exception e) {
+        return false;
+    }
+}
+
+protected WebElement findOpenedOptionExactFlow(String value, int retryCount) throws InterruptedException {
+
+    String literal = xpathLiteral(value);
+
+    for (int i = 0; i < retryCount; i++) {
+
+        WebElement option = findFirstVisibleFlow(
+                By.xpath("//*[@role='option' and normalize-space(.) = " + literal + "]"),
+                By.xpath("//*[contains(@class,'option') and normalize-space(.) = " + literal + "]"),
+                By.xpath("//*[contains(@class,'menu') and normalize-space(.) = " + literal + "]"),
+                By.xpath("//li[contains(@class,'select2-results__option') and normalize-space(.) = " + literal + "]"),
+                By.xpath("//*[not(self::script) and not(self::style) and normalize-space(.) = " + literal + "]")
+        );
+
+        if (option != null) {
+            return option;
+        }
+
+        Thread.sleep(500);
+    }
+
+    return null;
+}
+
+protected WebElement findSmallLabelByTextFlow(String labelText) {
+
+    try {
+        String literal1 = xpathLiteral(labelText);
+        String literal2 = xpathLiteral(labelText + ":");
+
+        List<WebElement> labels = driver.findElements(
+                By.xpath(
+                        "//*[not(self::script) and not(self::style) "
+                                + "and (normalize-space(.) = " + literal1
+                                + " or normalize-space(.) = " + literal2 + ")]"
+                )
+        );
+
+        for (WebElement label : labels) {
+            try {
+                if (!label.isDisplayed()) {
+                    continue;
+                }
+
+                Rectangle r = label.getRect();
+
+                if (r.getWidth() > 20
+                        && r.getWidth() < 250
+                        && r.getHeight() > 10
+                        && r.getHeight() < 60) {
+                    return label;
+                }
+
+            } catch (Exception ignored) {
+            }
+        }
+
+    } catch (Exception ignored) {
+    }
+
+    return null;
+}
+protected void applyFilterFlow(FeatureConfig config) throws InterruptedException {
+
+    if (config.statMode != null) {
+
+        boolean daChonThongKeTheo = chonThongKeTheoFlow(config.statMode);
+
+        Assert.assertTrue(
+                daChonThongKeTheo,
+                "Không chuyển được dropdown Thống kê theo sang: " + config.statMode
+        );
+
+        Thread.sleep(1500);
+    }
+
+    if (config.multiTerms != null && config.multiTerms.length > 0) {
+        selectMultiDropdownValuesFlow("Học kỳ", config.multiTerms);
+        Thread.sleep(1000);
+    } else if (config.termValue != null) {
+        selectDropdownByAnyLabelFlow(
+                new String[]{"Học kỳ", "Năm học"},
+                config.termValue,
+                false
+        );
+
+        Thread.sleep(1000);
+    }
+
+    if (config.majorText != null) {
+        selectDropdownByAnyLabelFlow(
+                new String[]{"Ngành"},
+                config.majorText,
+                false
+        );
+
+        Thread.sleep(1000);
+    }
+
+    if (config.lecturerTypeText != null) {
+        selectDropdownByAnyLabelFlow(
+                new String[]{"Loại giảng viên"},
+                config.lecturerTypeText,
+                false
+        );
+
+        Thread.sleep(1000);
+    }
+
+    if (config.teacherText != null) {
+        selectDropdownByAnyLabelFlow(
+                new String[]{"Giảng viên"},
+                config.teacherSearchText,
+                false
+        );
+
+        clickOptionByTextFlow(config.teacherText, false);
+
+        Thread.sleep(1200);
+    }
+
+    if (config.weekText != null) {
+        selectDropdownByAnyLabelFlow(
+                new String[]{"Tuần"},
+                config.weekText,
+                false
+        );
+
+        Thread.sleep(1200);
+    }
+
+    if (config.clickStatisticButton) {
+        clickButtonByTextFlow("Thống kê");
+        Thread.sleep(2000);
+    }
+
+    if (config.tabText != null) {
+        clickTextIfExistsFlow(config.tabText);
+        Thread.sleep(1200);
+    }
+}
     protected void openMenuByTextsFlow(String[] texts) throws InterruptedException {
 
         if (texts == null) {
